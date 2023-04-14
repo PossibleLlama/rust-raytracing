@@ -1,30 +1,63 @@
 use image::{RgbImage, ImageBuffer, Rgb};
 
-fn main() {
-    const IMAGE_WIDTH: u32 = 256*4;
-    const IMAGE_HEIGHT: u32 = 256*4;
-    const MAX_COLOR: u32 = 256;
+const IMAGE_WIDTH: u32 = 256*4;
+const IMAGE_HEIGHT: u32 = 256*4;
 
-    generate_png(IMAGE_WIDTH, IMAGE_HEIGHT, MAX_COLOR);
+fn main() {
+    // let img = generate_image(IMAGE_WIDTH, IMAGE_HEIGHT);
+
+    generate_png(IMAGE_WIDTH, IMAGE_HEIGHT, generate_image(IMAGE_WIDTH, IMAGE_HEIGHT));
+    generate_ppm(IMAGE_WIDTH, IMAGE_HEIGHT, generate_image(IMAGE_WIDTH, IMAGE_HEIGHT));
 }
 
-fn generate_png(w: u32, h: u32, c:u32) {
+fn generate_image(width: u32, height: u32) -> Vec<Color> {
+    let mut img = Vec::<Color>::new();
+
+    for h in (0..height).rev() {
+        for w in 0..width {
+            let r = w as f64 / (width-1) as f64;
+            let g = 0.25;
+            let b = h as f64 / (height-1) as f64;
+
+            img.push(Color {
+                rgb: [(255.999 * r) as u8, (255.999 * b) as u8, (255.999 * g) as u8],
+            });
+        }
+    }
+    img
+}
+
+fn generate_png(w: u32, h: u32, fill: Vec<Color>) {
     let mut buffer: RgbImage = ImageBuffer::new(w, h);
 
-    for (x, y, pixel) in buffer.enumerate_pixels_mut() {
-        let r = x as f64 / (w-1) as f64;
-        let g = 0.25;
-        let b = y as f64 / (h-1) as f64;
-
-        let int_r = (((c as f64) - 0.001) * r) as u8;
-        let int_g = (((c as f64) - 0.001) * g) as u8;
-        let int_b = (((c as f64) - 0.001) * b) as u8;
-
-        *pixel = Rgb([int_r, int_g, int_b]);
+    for (y, x, pixel) in buffer.enumerate_pixels_mut() {
+        *pixel = match fill.get(x as usize * IMAGE_WIDTH as usize + y as usize) {
+            Some(c) => color_to_rgb(c),
+            None => Rgb([255, 255, 255]),
+        };
     }
 
-    match buffer.save("output/ray.png") {
-        Ok(()) => println!("Done"),
-        Err(e) => println!("Error saving file: {e}"),
+    let filename = "output/ray.png";
+    match buffer.save(filename) {
+        Ok(()) => eprintln!("Finished {filename}"),
+        Err(e) => eprintln!("Error saving file: {e}"),
     };
+}
+
+fn generate_ppm(w: u32, h: u32, fill: Vec<Color>) {
+    println!("P3\n{w} {h}\n{}", 255);
+
+    for pix in fill.iter() {
+        println!("{} {} {}", pix.rgb[0], pix.rgb[1], pix.rgb[2]);
+    }
+
+    eprintln!("Finished ppm");
+}
+
+pub struct Color {
+    pub rgb: [u8; 3],
+}
+
+fn color_to_rgb (o: &Color) -> Rgb<u8> {
+    Rgb([o.rgb[0], o.rgb[1], o.rgb[2]])
 }
