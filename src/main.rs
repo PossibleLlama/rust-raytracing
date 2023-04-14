@@ -4,10 +4,9 @@ const IMAGE_WIDTH: u32 = 256*4;
 const IMAGE_HEIGHT: u32 = 256*4;
 
 fn main() {
-    // let img = generate_image(IMAGE_WIDTH, IMAGE_HEIGHT);
+    let img = generate_image(IMAGE_WIDTH, IMAGE_HEIGHT);
 
-    generate_png(IMAGE_WIDTH, IMAGE_HEIGHT, generate_image(IMAGE_WIDTH, IMAGE_HEIGHT));
-    generate_ppm(IMAGE_WIDTH, IMAGE_HEIGHT, generate_image(IMAGE_WIDTH, IMAGE_HEIGHT));
+    generate_png(IMAGE_WIDTH, IMAGE_HEIGHT, img);
 }
 
 fn generate_image(width: u32, height: u32) -> Vec<Color> {
@@ -39,19 +38,9 @@ fn generate_png(w: u32, h: u32, fill: Vec<Color>) {
 
     let filename = "output/ray.png";
     match buffer.save(filename) {
-        Ok(()) => eprintln!("Finished {filename}"),
-        Err(e) => eprintln!("Error saving file: {e}"),
+        Ok(()) => println!("Finished {filename}"),
+        Err(e) => println!("Error saving file: {e}"),
     };
-}
-
-fn generate_ppm(w: u32, h: u32, fill: Vec<Color>) {
-    println!("P3\n{w} {h}\n{}", 255);
-
-    for pix in fill.iter() {
-        println!("{} {} {}", pix.rgb[0], pix.rgb[1], pix.rgb[2]);
-    }
-
-    eprintln!("Finished ppm");
 }
 
 pub struct Color {
