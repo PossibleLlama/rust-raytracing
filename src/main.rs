@@ -1,7 +1,9 @@
 mod color;
+mod ray;
 
 use color::Color;
 use image::{ImageBuffer, Rgb, RgbImage};
+use ray::Ray;
 
 const IMAGE_WIDTH: u32 = 256 * 4;
 const IMAGE_HEIGHT: u32 = 256 * 4;
@@ -10,6 +12,10 @@ fn main() {
     let img = generate_image(IMAGE_WIDTH, IMAGE_HEIGHT);
 
     generate_png("ray.png", IMAGE_WIDTH, IMAGE_HEIGHT, img);
+
+    let a = Ray::new(1.0, 1.0, 0.0);
+    let b = Ray::new(2.0, 1.0, 0.0);
+    println!("Added rays a and b to get: '{:?}'", a + b);
 }
 
 fn generate_image(width: u32, height: u32) -> Vec<Color> {
