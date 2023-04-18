@@ -22,9 +22,9 @@ fn generate_image(width: u32, height: u32) -> Vec<Color> {
             let b = h as f64 / (height - 1) as f64;
 
             img.push(Color::new(
-                (255.999 * r) as f32,
-                (255.999 * b) as f32,
-                (255.999 * g) as f32,
+                255.999 * r,
+                255.999 * b,
+                255.999 * g,
             ));
         }
     }

@@ -1,11 +1,11 @@
 use image::Rgb;
 
 pub struct Color {
-    rgb: [f32; 3],
+    rgb: [f64; 3],
 }
 
 impl Color {
-    pub fn new(r: f32, g: f32, b: f32) -> Color {
+    pub fn new(r: f64, g: f64, b: f64) -> Color {
         Color { rgb: [r, g, b] }
     }
 
